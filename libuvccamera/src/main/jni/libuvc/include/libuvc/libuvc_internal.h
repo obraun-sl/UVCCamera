@@ -247,7 +247,7 @@ typedef struct uvc_device_info {
   We could/should change this to allow reduce it to, say, 5 by default
   and then allow the user to change the number of buffers as required.
  */
-#define LIBUVC_NUM_TRANSFER_BUFS 10
+#define LIBUVC_NUM_TRANSFER_BUFS 100
 
 #define LIBUVC_XFER_BUF_SIZE	( 16 * 1024 * 1024 )
 
@@ -281,6 +281,10 @@ struct uvc_stream_handle {
   uint8_t *transfer_bufs[LIBUVC_NUM_TRANSFER_BUFS];
   struct uvc_frame frame;
   enum uvc_frame_format frame_format;
+
+  /* raw metadata buffer if available */
+  uint8_t *meta_outbuf, *meta_holdbuf;
+  size_t meta_got_bytes, meta_hold_bytes;
 };
 
 /** Handle on an open UVC device

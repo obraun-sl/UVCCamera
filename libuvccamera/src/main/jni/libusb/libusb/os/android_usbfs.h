@@ -82,7 +82,7 @@ struct usbfs_iso_packet_desc {
 };
 
 #define MAX_ISO_BUFFER_LENGTH		32768	// 32 x 1024 = 32KB
-#define MAX_BULK_BUFFER_LENGTH		16384	// 16 x 1024 = 16KB
+#define MAX_BULK_BUFFER_LENGTH		32768	// 32 x 1024 = 16KB
 #define MAX_CTRL_BUFFER_LENGTH		4096	// 4 x 1024 = 4KB
 
 struct usbfs_urb {
@@ -94,10 +94,10 @@ struct usbfs_urb {
 	int buffer_length;
 	int actual_length;
 	int start_frame;
-	union {
-		int number_of_packets;	/* Only used for isoc urbs */
-		unsigned int stream_id;	/* Only used with bulk streams */
-	};
+    union {
+        int number_of_packets;	// Only used for isoc urbs
+        unsigned int stream_id;	// Only used with bulk streams
+    };
 	int error_count;
 	unsigned int signr;
 	void *usercontext;

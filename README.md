@@ -1,3 +1,5 @@
+
+
 UVCCamera
 =========
 
@@ -27,7 +29,7 @@ The Gradle build system will build the entire project, including the NDK parts. 
 
 1. make directory on your favorite place (this directory is parent directory of `UVCCamera` project).
 2. change directory into the directory.
-3. clone this repository with `git  clone https://github.com/saki4510t/UVCCamera.git`
+3. clone this repository with `git  clone https://github.com/obraun-sl/UVCCamera.git`
 4. change directory into `UVCCamera` directory with `cd UVCCamera`
 5. build library with all sample projects using `gradle build`
 
@@ -39,7 +41,7 @@ Note: Just make sure that `local.properties` contains the paths for `sdk.dir` an
 If you want to use Android Studio(unfortunately NDK supporting on Android Studio is very poor though),
 1. make directory on your favorite place (this directory is parent directory of `UVCCamera` project).
 2. change directory into the directory.
-3. clone this repository with `git  clone https://github.com/saki4510t/UVCCamera.git`
+3. clone this repository with `git  clone https://github.com/obraun-sl/UVCCamera.git`
 4. start Android Studio and open the cloned repository using `Open an existing Android Studio project`
 5. Android Studio raise some errors but just ignore now. Android Studio generate `local.properties` file. Please open `local.properties` and add `ndk.dir` key to the end of the file. The contents of the file looks like this.
 ```
@@ -51,7 +53,7 @@ Of course you can make `local.properties` by manually instead of using automatic
 6. Synchronize project
 7. execute `Make project` from `Build` menu.
 
-If you want to use build-in VCS on Android Studio, use `Check out project from Version Control` from `https://github.com/saki4510t/UVCCamera.git`. After cloning, Android Studio ask you open the project but don't open now. Instead open the project using `Open an existing Android Studio project`. Other procedures are same as above.
+If you want to use build-in VCS on Android Studio, use `Check out project from Version Control` from `https://github.com/obraun-sl/UVCCamera.git`. After cloning, Android Studio ask you open the project but don't open now. Instead open the project using `Open an existing Android Studio project`. Other procedures are same as above.
 
 If you still need to use Eclipse or if you don't want to use Gradle with some reason, you can build suing `ndk-build` command.
 
@@ -73,6 +75,18 @@ If you want to try on Android 3.1, you will need some modification(need to remov
 setPreviewTexture method in UVCCamera.java etc.), but we have not confirm whether the sample
 project run on Android 3.1 yet.
 Some sample projects need API>=18 though.
+
+
+### Roadmap
+-> Use cmake to generate a single libuvccamera.so (check android studio compatibility) so that it's more simple to use on a IDE.
+-> Integrate OpenCV into the libuvccamera.so for image processing.
+-> Keep one single sample, easier for maintenance...
+
+### 2021
+Some changes for high usb bandwidth (USB3.0 camera) for bulk transfer such as ZED Camera. (OB)
+Tested on Samsung S9+.
+Make sure to activate maximum performance on the phone otherwise it reduces the CPU to 70% ( at least it does that on the S9+)
+
 
 ### 2014/07/25
 Add some modification to the library and new sample project named "USBCameraTest2".

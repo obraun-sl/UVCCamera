@@ -125,6 +125,7 @@ uvc_frame_t *UVCPreview::get_frame(size_t data_bytes) {
 void UVCPreview::recycle_frame(uvc_frame_t *frame) {
 	pthread_mutex_lock(&pool_mutex);
 	if (LIKELY(mFramePool.size() < FRAME_POOL_SZ)) {
+                // LOGW("recycle_frame");
 		mFramePool.put(frame);
 		frame = NULL;
 	}
@@ -392,20 +393,11 @@ void UVCPreview::uvc_preview_frame_callback(uvc_frame_t *frame, void *vptr_args)
 	if (UNLIKELY(
 		((frame->frame_format != UVC_FRAME_FORMAT_MJPEG) && (frame->actual_bytes < preview->frameBytes))
 		|| (frame->width != preview->frameWidth) || (frame->height != preview->frameHeight) )) {
-
-#if LOCAL_DEBUG
-		LOGD("broken frame!:format=%d,actual_bytes=%d/%d(%d,%d/%d,%d)",
-			frame->frame_format, frame->actual_bytes, preview->frameBytes,
-			frame->width, frame->height, preview->frameWidth, preview->frameHeight);
-#endif
 		return;
 	}
 	if (LIKELY(preview->isRunning())) {
 		uvc_frame_t *copy = preview->get_frame(frame->data_bytes);
 		if (UNLIKELY(!copy)) {
-#if LOCAL_DEBUG
-			LOGE("uvc_callback:unable to allocate duplicate frame!");
-#endif
 			return;
 		}
 		uvc_error_t ret = uvc_duplicate_frame(frame, copy);

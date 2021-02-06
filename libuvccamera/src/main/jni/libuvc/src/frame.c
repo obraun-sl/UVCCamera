@@ -51,7 +51,7 @@
 #include "libuvc/libuvc.h"
 #include "libuvc/libuvc_internal.h"
 
-#define USE_STRIDE 1
+#define USE_STRIDE 0
 /** @internal */
 uvc_error_t uvc_ensure_frame_size(uvc_frame_t *frame, size_t need_bytes) {
 	if LIKELY(frame->library_owns_data) {
@@ -800,8 +800,9 @@ uvc_error_t uvc_uyvy2rgb(uvc_frame_t *in, uvc_frame_t *out) {
 		}
 	}
 #else
-	for (; ((prgb <= prgb_end) && (pyuv <= pyuv_end) ;) {
-		IUYVY2RGB_8(pyuv, prgb, 0, 0);
+    //for (; ((prgb <= prgb_end) && (pyuv <= pyuv_end) ;) {
+    while (prgb < prgb_end){
+        IUYVY2RGB_8(pyuv, prgb, 0, 0);
 
 		prgb += PIXEL8_RGB;
 		pyuv += PIXEL8_UYVY;

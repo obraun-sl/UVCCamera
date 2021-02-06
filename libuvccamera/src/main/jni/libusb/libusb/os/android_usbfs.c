@@ -2168,7 +2168,8 @@ static int submit_bulk_transfer(struct usbi_transfer *itransfer) {
 	 * short split-transfers to work reliable USBFS_CAP_BULK_CONTINUATION
 	 * is needed, but this is not always available.
 	 */
-	if (dpriv->caps & USBFS_CAP_BULK_SCATTER_GATHER) {
+        //LOGE("driver caps %d \n",dpriv->caps);
+        if (dpriv->caps & USBFS_CAP_BULK_SCATTER_GATHER) {
 		/* Good! Just submit everything in one go */
 		bulk_buffer_len = transfer->length ? transfer->length : 1;
 		use_bulk_continuation = 0;
@@ -2177,7 +2178,7 @@ static int submit_bulk_transfer(struct usbi_transfer *itransfer) {
 		   avoid issues with short-transfers */
 		bulk_buffer_len = MAX_BULK_BUFFER_LENGTH;
 		use_bulk_continuation = 1;
-	} else if (dpriv->caps & USBFS_CAP_NO_PACKET_SIZE_LIM) {
+        } else if (dpriv->caps & USBFS_CAP_NO_PACKET_SIZE_LIM) {
 		/* Don't split, assume the kernel can alloc the buffer
 		   (otherwise the submit will fail with -ENOMEM) */
 		bulk_buffer_len = transfer->length ? transfer->length : 1;
@@ -2200,10 +2201,10 @@ static int submit_bulk_transfer(struct usbi_transfer *itransfer) {
 		last_urb_partial = 1;
 		num_urbs++;
 	}
-	usbi_dbg("need %d urbs for new transfer with length %d", num_urbs, transfer->length);
+
 	alloc_size = num_urbs * sizeof(struct usbfs_urb);
 	urbs = calloc(1, alloc_size);
-	if (UNLIKELY(!urbs))
+        if (!urbs)
 		return LIBUSB_ERROR_NO_MEM;
 	tpriv->urbs = urbs;
 	tpriv->num_urbs = num_urbs;
@@ -2217,11 +2218,11 @@ static int submit_bulk_transfer(struct usbi_transfer *itransfer) {
 		switch (transfer->type) {
 		case LIBUSB_TRANSFER_TYPE_BULK:
 			urb->type = USBFS_URB_TYPE_BULK;
-			urb->stream_id = 0;
+            urb->stream_id = 0;
 			break;
 		case LIBUSB_TRANSFER_TYPE_BULK_STREAM:
 			urb->type = USBFS_URB_TYPE_BULK;
-			urb->stream_id = itransfer->stream_id;
+            urb->stream_id = itransfer->stream_id;
 			break;
 		case LIBUSB_TRANSFER_TYPE_INTERRUPT:
 			urb->type = USBFS_URB_TYPE_INTERRUPT;
@@ -2232,6 +2233,7 @@ static int submit_bulk_transfer(struct usbi_transfer *itransfer) {
 		/* don't set the short not ok flag for the last URB */
 		if (use_bulk_continuation && !is_out && (i < num_urbs - 1))
 			urb->flags = USBFS_URB_SHORT_NOT_OK;
+
 		if (i == num_urbs - 1 && last_urb_partial)
 			urb->buffer_length = transfer->length % bulk_buffer_len;
 		else if (transfer->length == 0)
@@ -2250,7 +2252,7 @@ static int submit_bulk_transfer(struct usbi_transfer *itransfer) {
 		dump_urb(i, dpriv->fd, urb);
 #endif
 		r = ioctl(dpriv->fd, IOCTL_USBFS_SUBMITURB, urb);
-		if (UNLIKELY(r < 0)) {
+        if (r < 0) {
 			if (errno == ENODEV) {
 				r = LIBUSB_ERROR_NO_DEVICE;
 			} else {
@@ -2653,8 +2655,8 @@ static int handle_bulk_completion(struct libusb_device_handle *handle,	// XXX ad
 		usbi_dbg("detected endpoint stall");
 		if (tpriv->reap_status == LIBUSB_TRANSFER_COMPLETED)
 			tpriv->reap_status = LIBUSB_TRANSFER_STALL;
-		LOGE("LIBUSB_TRANSFER_STALL");
-		op_clear_halt(handle, urb->endpoint);	// XXX added saki
+        //LOGE("LIBUSB_TRANSFER_STALL");
+        //op_clear_halt(handle, urb->endpoint);	// XXX added saki
 		goto cancel_remaining;
 	case -EOVERFLOW:
 		/* overflow can only ever occur in the last urb */
@@ -2873,8 +2875,8 @@ static int handle_control_completion(struct libusb_device_handle *handle,	// XXX
 	case -EPIPE:
 		usbi_dbg("unsupported control request");
 		status = LIBUSB_TRANSFER_STALL;
-		LOGE("LIBUSB_TRANSFER_STALL");
-		op_clear_halt(handle, urb->endpoint);	// XXX added saki
+        //LOGE("LIBUSB_TRANSFER_STALL");
+        //op_clear_halt(handle, urb->endpoint);	// XXX added saki
 		break;
 	case -EOVERFLOW:
 		usbi_dbg("control overflow error");
